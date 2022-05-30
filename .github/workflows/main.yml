@@ -16,7 +16,7 @@ jobs:
           java-version: '17.x'
   
       - name: test and build
-        run: ./gradlew test build
+        run: ./gradlew build
           
       - name: Generate Docker image tag with short sha
         id: dockertag
@@ -27,7 +27,6 @@ jobs:
         with:
           push: true
           tags: ${{ steps.dockertag.outputs.docker_img }}
-          context: /
   deployProd:
     name: Deploy to prod
     needs: [ build ]
