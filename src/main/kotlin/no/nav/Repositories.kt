@@ -60,7 +60,7 @@ data class Repo(
     val description: String,
     val htmlUrl: String,
     val topics: String,
-    val private: String,
+    val visibility: String,
     val commits: Int
 ) {
 
