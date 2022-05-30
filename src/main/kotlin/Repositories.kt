@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.client.*
@@ -11,17 +12,29 @@ import kotlinx.coroutines.runBlocking
 val mapper = jacksonObjectMapper().registerModule(KotlinModule())
 
 class Repositories(private val token: String) {
+    internal var repos = lazy { repos() }
     private val client = HttpClient(CIO)
-    internal val repos = lazy { refresh() }
+    private val filters = listOf(
+        { repo: JsonNode -> repo["archived"].asText() == "false"},
+        { repo: JsonNode -> repo["disabled"].asText() == "false" }
+    )
 
     internal fun refresh(): List<Repo> {
+        repos = lazy { repos() }
+        return repos.value
+    }
+
+    private fun repos(): List<Repo> {
         val response: String = runBlocking {
-            client.get("https://api.github.com/orgs/navikt/teams/tbd/repos?per_page=100") {
+            client.get("https://api.github.com/orgs/navikt/teams/tbd/repos?per_page=200") {
                 header(HttpHeaders.Authorization, "token $token")
             }.bodyAsText()
         }
-        val json = mapper.readTree(response)
-        val repos = json.map { Repo.fromJson(it) { name -> commits(name) } }.sortedBy { it.commits }
+        val json = mapper.readTree(response) as ArrayNode
+        val repos = json
+            .filter { node ->  filters.all { it(node) }}
+            .map { Repo.fromJson(it) { name -> commits(name) } }
+            .sortRepos()
         return repos
     }
 
@@ -34,6 +47,11 @@ class Repositories(private val token: String) {
         }
         val result = Regex("(&page=\\d*)").findAll(response["Link"].toString())
         return Integer.parseInt(result.toList()[1].value.split("=")[1])
+    }
+
+    private fun Iterable<Repo>.sortRepos(): List<Repo> {
+        return sortedByDescending { it.commits }
+            .sortedByDescending { it.name.startsWith("helse") }
     }
 }
 
@@ -54,7 +72,7 @@ data class Repo(
                 jsonNode["description"].asText(),
                 jsonNode["html_url"].asText(),
                 jsonNode["topics"].asText(),
-                jsonNode["private"].asText(),
+                jsonNode["visibility"].asText(),
                 commits(name)
             )
         }
