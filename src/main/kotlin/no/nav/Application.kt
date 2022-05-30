@@ -63,5 +63,9 @@ fun Application.configureRouting(repositories: Repositories) {
         get("repos") {
             call.respondText(repositories.repos.value.toJson(), ContentType.Application.Json)
         }
+
+        get("isalive") {
+            call.respondText("OK")
+        }
     }
 }

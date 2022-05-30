@@ -13,7 +13,7 @@ spec:
     initialDelay: 5
     timeoutSeconds: 3
   readiness:
-    path: /isready
+    path: /isalive
     initialDelay: 5
     timeoutSeconds: 3
   resources:
