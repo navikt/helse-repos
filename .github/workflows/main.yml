@@ -46,4 +46,4 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: .nais.yml
-          IMAGE: ${{ needs.set_version.outputs.image }}
+          IMAGE: ${{ steps.dockertag.outputs.docker_img }}
