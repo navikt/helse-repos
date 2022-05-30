@@ -69,7 +69,7 @@ data class Repo(
             val name = jsonNode["name"].asText()
             return Repo(
                 name,
-                jsonNode["description"].asText(),
+                jsonNode["description"].asText("[Ingen beskrivelse]"),
                 jsonNode["html_url"].asText(),
                 jsonNode["topics"].asText(),
                 jsonNode["visibility"].asText(),
