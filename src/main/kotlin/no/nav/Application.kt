@@ -28,7 +28,7 @@ suspend fun start() {
         coroutineScope {
             launch {
                 while (true) {
-                    delay(10.minutes)
+                    delay(30.minutes)
                     logger.info("Refreshing repositories list")
                     repositories.refresh()
                     logger.info("Refreshing repositories list complete")
