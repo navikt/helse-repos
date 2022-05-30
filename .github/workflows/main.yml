@@ -41,7 +41,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+
+      - name: Generate Docker image tag with short sha
+        id: dockertag
+        run: echo "::set-output name=docker_img::ghcr.io/${{ github.repository }}:$(git rev-parse --short HEAD)"
+
       - uses: nais/deploy/actions/deploy@v1
+        if: github.ref == 'refs/heads/main'
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
