@@ -29,3 +29,5 @@ spec:
   prometheus:
     enabled: true
     path: /metrics
+  envFrom:
+    - secret: helse-repos-github-api-token
