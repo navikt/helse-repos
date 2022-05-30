@@ -1,3 +1,6 @@
+package no.nav
+
+import Repositories
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -11,10 +14,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import toJson
 import kotlin.time.Duration.Companion.minutes
 
 
-fun main() = runBlocking {  start() }
+fun main() = runBlocking { start() }
 
 suspend fun start() {
     val logger = LoggerFactory.getLogger("helse-repos")

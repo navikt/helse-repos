@@ -31,3 +31,44 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
+
+tasks {
+    compileKotlin {
+        kotlinOptions.jvmTarget = "17"
+    }
+
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "17"
+    }
+
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    jar {
+
+        archiveFileName.set("app.jar")
+
+        manifest {
+            attributes["Main-Class"] = "no.nav.Application.AppKt"
+            attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
+                it.name
+            }
+        }
+
+
+        doLast {
+            configurations.runtimeClasspath.get()
+                .filter { it.name != "app.jar" }
+                .forEach {
+                    val file = File("$buildDir/libs/${it.name}")
+                    if (!file.exists())
+                        it.copyTo(file)
+                }
+        }
+    }
+}
