@@ -29,5 +29,12 @@ spec:
   prometheus:
     enabled: true
     path: /metrics
+  accessPolicy:
+    inbound:
+      rules:
+        - application: tbd-website
+    outboud:
+        external:
+          - host: https://api.github.com
   envFrom:
     - secret: helse-repos-github-api-token
