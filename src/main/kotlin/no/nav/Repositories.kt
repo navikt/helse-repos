@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -28,7 +29,7 @@ class Repositories(private val token: String) {
         val response: String = runBlocking {
             client.get("https://api.github.com/orgs/navikt/teams/tbd/repos?per_page=200") {
                 header(HttpHeaders.Authorization, "token $token")
-            }.bodyAsText()
+            }.apply { if(!status.isSuccess()) throw RuntimeException("Error requesting github api: ${bodyAsText()}") }.bodyAsText()
         }
         val json = mapper.readTree(response) as ArrayNode
         val repos = json
