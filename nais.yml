@@ -24,8 +24,8 @@ spec:
       cpu: 100m
       memory: 1Gi
   replicas:
-    min: 1
-    max: 1
+    min: 0
+    max: 0
   prometheus:
     enabled: false
   accessPolicy:
